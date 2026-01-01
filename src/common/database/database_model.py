@@ -355,6 +355,24 @@ class Jargon(BaseModel):
         table_name = "jargon"
 
 
+class Favorability(BaseModel):
+    """
+    用于存储用户好感度数据的模型
+    """
+
+    person_id = TextField(unique=True, index=True)  # 关联 PersonInfo 的 person_id
+    favorability = IntegerField(default=50)  # 好感度值 (0-100)，默认50
+    level = TextField(default="熟人")  # 好感度等级
+    total_interactions = IntegerField(default=0)  # 总交互次数
+    positive_interactions = IntegerField(default=0)  # 正面交互次数
+    negative_interactions = IntegerField(default=0)  # 负面交互次数
+    last_interaction = FloatField(null=True)  # 最后交互时间戳
+    created_at = FloatField(null=True)  # 创建时间戳
+
+    class Meta:
+        table_name = "favorability"
+
+
 class ChatHistory(BaseModel):
     """
     用于存储聊天历史概括的模型
@@ -409,6 +427,7 @@ MODELS = [
     Jargon,
     ChatHistory,
     ThinkingBack,
+    Favorability,
 ]
 
 
