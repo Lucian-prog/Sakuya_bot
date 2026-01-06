@@ -1,6 +1,11 @@
 <img src="depends-data/maimai.png" alt="MaiBot" title="作者:略nd" width="300">
 
-# 麦麦！MaiCore-MaiBot
+> **📢 项目说明**  
+> 本项目基于 [MaiM-with-u/MaiBot](https://github.com/MaiM-with-u/MaiBot) 进行修改和定制  
+> 原作者：略nd  
+> 本项目遵循 GPL-3.0 开源协议
+
+# 麦麦！MaiCore-MaiBot (Sakuya_bot 定制版)
 
 ![Python Version](https://img.shields.io/badge/Python-3.10+-blue)
 ![License](https://img.shields.io/github/license/SengokuCola/MaiMBot?label=协议)
