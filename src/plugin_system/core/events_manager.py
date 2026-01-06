@@ -1,12 +1,13 @@
 import asyncio
 import contextlib
-from typing import List, Dict, Optional, Type, Tuple, TYPE_CHECKING
+from typing import List, Dict, Optional, Type, Tuple, TYPE_CHECKING, Union
 
 from src.chat.message_receive.message import MessageRecv, MessageSending
 from src.chat.message_receive.chat_stream import get_chat_manager
 from src.common.logger import get_logger
 from src.plugin_system.base.component_types import EventType, EventHandlerInfo, MaiMessages, CustomEventHandlerResult
 from src.plugin_system.base.base_events_handler import BaseEventHandler
+from src.common.data_models.database_data_model import DatabaseMessages
 from .global_announcement_manager import global_announcement_manager
 
 if TYPE_CHECKING:
@@ -260,6 +261,46 @@ class EventsManager:
 
         return transformed_message
 
+    def _transform_database_message(
+        self,
+        message: DatabaseMessages,
+        llm_prompt: Optional[str] = None,
+        llm_response: Optional["LLMGenerationDataModel"] = None,
+    ) -> MaiMessages:
+        """转换 DatabaseMessages 格式为 MaiMessages"""
+        transformed_message = MaiMessages(
+            llm_prompt=llm_prompt,
+            llm_response_content=llm_response.content if llm_response else None,
+            llm_response_reasoning=llm_response.reasoning if llm_response else None,
+            llm_response_model=llm_response.model if llm_response else None,
+            llm_response_tool_call=llm_response.tool_calls if llm_response else None,
+            raw_message=None,  # DatabaseMessages 没有 raw_message
+            additional_data={},
+        )
+
+        # stream_id 处理
+        if hasattr(message, "chat_info") and message.chat_info:
+            transformed_message.stream_id = message.chat_info.stream_id
+
+        # 处理后文本
+        transformed_message.plain_text = message.processed_plain_text or ""
+
+        # 基本信息 - 从 DatabaseMessages 的结构中获取
+        if hasattr(message, "user_info") and message.user_info:
+            transformed_message.message_base_info["platform"] = message.user_info.platform
+            transformed_message.message_base_info["user_id"] = message.user_info.user_id
+            transformed_message.message_base_info["user_nickname"] = message.user_info.user_nickname
+            transformed_message.message_base_info["user_cardname"] = message.user_info.user_cardname
+
+        if hasattr(message, "group_info") and message.group_info:
+            transformed_message.is_group_message = True
+            transformed_message.message_base_info["group_id"] = message.group_info.group_id
+            transformed_message.message_base_info["group_name"] = message.group_info.group_name
+        else:
+            transformed_message.is_private_message = True
+
+        return transformed_message
+
     def _build_message_from_stream(
         self, stream_id: str, llm_prompt: Optional[str] = None, llm_response: Optional["LLMGenerationDataModel"] = None
     ) -> MaiMessages:
@@ -295,7 +336,7 @@ class EventsManager:
     def _prepare_message(
         self,
         event_type: EventType,
-        message: Optional[MessageRecv | MessageSending] = None,
+        message: Optional[Union[MessageRecv, MessageSending, DatabaseMessages]] = None,
         llm_prompt: Optional[str] = None,
         llm_response: Optional["LLMGenerationDataModel"] = None,
         stream_id: Optional[str] = None,
@@ -303,6 +344,9 @@ class EventsManager:
     ) -> Optional[MaiMessages]:
         """根据事件类型和输入，准备和转换消息对象。"""
         if message:
+            # 检查消息类型，使用对应的转换方法
+            if isinstance(message, DatabaseMessages):
+                return self._transform_database_message(message, llm_prompt, llm_response)
             return self._transform_event_message(message, llm_prompt, llm_response)
 
         if event_type not in [EventType.ON_START, EventType.ON_STOP]:
