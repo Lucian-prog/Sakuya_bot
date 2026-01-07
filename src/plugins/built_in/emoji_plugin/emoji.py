@@ -20,7 +20,7 @@ logger = get_logger("emoji")
 class EmojiAction(BaseAction):
     """表情动作 - 发送表情包"""
 
-    activation_type = ActionActivationType.RANDOM
+    activation_type = ActionActivationType.ALWAYS  # 改为 ALWAYS，始终参与决策
     random_activation_probability = global_config.emoji.emoji_chance
     parallel_action = True
 
@@ -33,8 +33,8 @@ class EmojiAction(BaseAction):
 
     # 动作使用场景
     action_require = [
-        "发送表情包辅助表达情绪",
-        "表达情绪时可以选择使用",
+        "发送表情包辅助表达情绪，建议经常使用",
+        "表达情绪时优先考虑使用表情包",
         "不要连续发送，如果你已经发过[表情包]，就不要选择此动作",
     ]
 
