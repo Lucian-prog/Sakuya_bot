@@ -1,21 +1,13 @@
 name: Docker Build and Push (Main)
 
 on:
-  push:
-    branches:
-      - main
-      - classical
-    tags:
-      - "v*.*.*"
-      - "v*"
-      - "*.*.*"
-      - "*.*.*-*"
-  workflow_dispatch: # 允许手动触发工作流
+  workflow_dispatch: # 仅手动触发
     inputs:
       branch:
         description: 'Branch to build'
         required: false
         default: 'main'
+
 
 # Workflow's jobs
 jobs:
