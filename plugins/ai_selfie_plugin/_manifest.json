@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "name": "AI 自拍插件 (AI Selfie Plugin)",
+  "version": "1.0.0",
+  "description": "通过关键词触发，使用 SiliconFlow 的 FLUX 模型生成 AI 自拍图片",
+  "author": {
+    "name": "MaiBot",
+    "url": "https://github.com/MaiM-with-u"
+  },
+  "license": "MIT",
+  "host_application": {
+    "min_version": "0.8.0"
+  },
+  "keywords": [
+    "ai",
+    "image",
+    "selfie",
+    "flux",
+    "siliconflow",
+    "text-to-image"
+  ],
+  "categories": [
+    "Image Generation",
+    "Entertainment"
+  ],
+  "default_locale": "zh-CN",
+  "plugin_info": {
+    "is_built_in": false,
+    "plugin_type": "image_generation",
+    "components": [
+      {
+        "type": "action",
+        "name": "ai_selfie",
+        "description": "生成一张 AI 自拍图片并发送",
+        "activation_modes": ["keyword"],
+        "keywords": [
+          "发张自拍",
+          "自拍",
+          "发自拍",
+          "来张自拍",
+          "看看你的照片",
+          "想看你",
+          "你长什么样",
+          "发个照片"
+        ]
+      }
+    ]
+  }
+}

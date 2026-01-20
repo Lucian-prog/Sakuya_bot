@@ -1,0 +1,65 @@
+{
+  "manifest_version": 1,
+  "name": "好感度系统插件 (Favorability Plugin)",
+  "version": "2.0.0",
+  "description": "好感度系统 - 根据用户互动调整好感度，数据存储在数据库中，与 PersonInfo 关联",
+  "author": {
+    "name": "User",
+    "url": ""
+  },
+  "license": "GPL-v3.0-or-later",
+  "host_application": {
+    "min_version": "0.8.0"
+  },
+  "homepage_url": "",
+  "repository_url": "",
+  "keywords": [
+    "favorability",
+    "relationship",
+    "好感度",
+    "互动"
+  ],
+  "categories": [
+    "Social",
+    "Interaction"
+  ],
+  "default_locale": "zh-CN",
+  "locales_path": "_locales",
+  "plugin_info": {
+    "is_built_in": false,
+    "plugin_type": "social",
+    "components": [
+      {
+        "type": "event_handler",
+        "name": "favorability_handler",
+        "description": "根据用户互动调整好感度"
+      },
+      {
+        "type": "command",
+        "name": "favorability",
+        "description": "查询与麦麦的好感度",
+        "pattern": "/好感度"
+      },
+      {
+        "type": "action",
+        "name": "favorability_query",
+        "description": "当用户询问好感度时，回复好感度信息",
+        "activation_modes": [
+          "keyword"
+        ],
+        "keywords": [
+          "好感度",
+          "我的好感",
+          "好感多少"
+        ]
+      }
+    ],
+    "features": [
+      "自动好感度增减",
+      "好感度等级系统",
+      "好感度查询命令",
+      "关键词触发查询"
+    ]
+  },
+  "id": "User.favorability_plugin"
+}

@@ -322,7 +322,11 @@ run_pet.bat
 !/plugins/deep_think
 !/plugins/MaiBot_MCPBridgePlugin
 !/plugins/ChatFrequency/
+!/plugins/favorability_plugin
+!/plugins/ai_selfie_plugin
+!/plugins/action_emote_plugin
 !/plugins/__init__.py
+
 
 config.toml
 

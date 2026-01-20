@@ -431,16 +431,8 @@ def random_remove_punctuation(text: str) -> str:
 
 def _get_random_default_reply() -> str:
     """获取随机默认回复"""
-    default_replies = [
-        f"{global_config.bot.nickname}不知道哦",
-        f"{global_config.bot.nickname}不知道",
-        "不知道哦",
-        "不知道",
-        "不晓得",
-        "懒得说",
-        "()",
-    ]
-    return random.choice(default_replies)
+    return ""
+
 
 
 def process_llm_response(text: str, enable_splitter: bool = True, enable_chinese_typo: bool = True) -> list[str]:
@@ -454,16 +446,26 @@ def process_llm_response(text: str, enable_splitter: bool = True, enable_chinese
     else:
         protected_text = text
         kaomoji_mapping = {}
-    # 提取被 () 或 [] 或 （）包裹且包含中文的内容
-    pattern = re.compile(r"[(\[（](?=.*[一-鿿]).*?[)\]）]")
-    _extracted_contents = pattern.findall(protected_text)  # 在保护后的文本上查找
-    # 去除 () 和 [] 及其包裹的内容
-    cleaned_text = pattern.sub("", protected_text)
+    # 提取括号动作（仅中文括号），不处理 [] 以保留表情包描述
+    action_pattern = re.compile(r"[（](?=.*[一-鿿]).*?[）]")
+    _extracted_contents = action_pattern.findall(protected_text)  # 在保护后的文本上查找
+    # 去除括号动作内容
+    cleaned_text = action_pattern.sub("", protected_text)
+    # 去除表情包描述
+    cleaned_text = re.sub(r"\[表情包[:：].*?\]", "", cleaned_text)
 
+    action_texts = [text.strip() for text in _extracted_contents if text.strip()]
     if cleaned_text == "":
-        return ["呃呃"]
+        if action_texts:
+            return action_texts
+        return []
+
+    if action_texts:
+        cleaned_text = "\n".join(action_texts + [cleaned_text.strip()])
+
 
     logger.debug(f"{text}去除括号处理后的文本: {cleaned_text}")
+
 
     # 对清理后的文本进行进一步处理
     max_length = global_config.response_splitter.max_length * 2
